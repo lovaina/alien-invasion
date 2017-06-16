@@ -3,6 +3,7 @@ import pygame
 
 from bullet import Bullet
 from alien import Alien
+from time import sleep
 
 def check_events(ai_settings, screen, ship, bullets):
     # Watch for the keyboard and mouse events
@@ -102,11 +103,24 @@ def get_number_rows(ai_settings, ship_height, alien_height):
     number_rows = int(available_space_y / (2 * alien_height))
     return number_rows
 
+def ship_hit(ai_settings, stats, screen, ship, aliens, bullets):
+    stats.ships_left -= 1
 
-def update_aliens(ai_settings, aliens):
+    aliens.empty()
+    bullets.empty()
+
+    create_fleet(ai_settings, screen, ship, aliens)
+    ship.center_ship()
+
+    sleep(0.5)
+
+def update_aliens(ai_settings, stats, screen, ship, aliens, bullets):
     # Update aliens position
     check_fleet_edges(ai_settings, aliens)
     aliens.update()
+
+    if pygame.sprite.spritecollide(ship, aliens, False):
+        ship_hit(ai_settings, stats, screen, ship, aliens, bullets)
 
 
 def check_fleet_edges(ai_settings, aliens):
